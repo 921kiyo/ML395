@@ -2,7 +2,7 @@
 
 Run
 
-`virtualenv -p python3 test`
+`virtualenv -p python3 venv`
 
 To get into the virtualenv, run
 
@@ -11,3 +11,8 @@ To get into the virtualenv, run
 To get the same dependencies, run
 
 `pip install -r requirements.txt`
+
+
+To get out of the virtualenv, run
+
+`deactivate`
