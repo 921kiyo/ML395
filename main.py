@@ -46,36 +46,53 @@ print(mat_y)
 
 class Tree:
     def __init__(self, mat_x, mat_y):
-        self.op = self.decision_tree_learning(mat_x, mat_x, mat_y)
+        # self.op = 0
+        self.op = self.decision_tree_learning(mat_x, attributes, mat_y)
         self.kids = []
         # 1 or 0
         self.leaf = []
 
-    # def initialize(self):
-    #     if(is_same_binary(binary_target)):
-    #         leaf = binary_target[0]
-    #         return leaf
-    #
-    #     elif(np.binary_target([])):
-    #         leaf =  majority_value(binary_target)
-    #         return leaf
-    #
-    #     else:
-    #         leaf = choose_best_decision_attribute(examples, attributes, binary_target)
-    #         return leaf
-
     def decision_tree_learning(self, examples, attributes, binary_target):
-        if(self.is_same_binary(binary_target)):
-            leaf = binary_target[0]
-            return leaf
+        # if(self.is_same_binary(binary_target)):
+        #     leaf = binary_target[0]
+        #     return leaf
+        #
+        # elif(np.binary_target([])):
+        #     leaf =  majority_value(binary_target)
+        #     return leaf
 
-        elif(np.binary_target([])):
-            leaf =  majority_value(binary_target)
-            return leaf
+        # else:
+        # best_attribute = choose_best_decision_attribute(examples, attributes, binary_target)
+        print("attributes length ", len(attributes))
 
-        else:
-            leaf = choose_best_decision_attribute(examples, attributes, binary_target)
-            return leaf
+        self.op = self.choose_best_decision_attribute(examples, attributes, binary_target)
+        # for i in range(0,1):
+        examples_trim_0 = []
+        binary_target_trim_0 = []
+        examples_trim_1 = []
+        binary_target_trim_1 = []
+        self.split_data(examples, binary_target, 0, examples_trim_0, binary_target_trim_0)
+        self.split_data(examples, binary_target, 1, examples_trim_1, binary_target_trim_1)
+        print(len(examples_trim_0))
+        print(len(examples_trim_1))
+        if len(examples_trim_0) == 0:
+            # self.leaf =
+
+
+        return 0
+
+    def split_data(self, examples, binary_target, binary, examples_trim, binary_target_trim):
+        i = 0
+        counter = 0
+        for row in examples:
+            if examples[i][self.op] == binary:
+                # foo = examples[:, row]
+                examples_trim.append(row)
+                binary_target_trim.append(binary_target[i])
+                counter += 1
+                # binary_target_trim.append(binary_target[i])
+            i += 1
+
 
 
     def is_same_binary(self, binary_target):
@@ -107,13 +124,16 @@ class Tree:
         print(initial_entropy)
 
         largest_info_gain = 0
+        best_attribute = 0
+        # TODO fix indx
+
         for idx in range(len(attributes)):
             info_gain = self.get_info_gain(binary_target, examples, initial_entropy, idx)
             if(largest_info_gain < info_gain):
+                best_attribute = idx
                 largest_info_gain = info_gain
 
-        print("largest info gain")
-        print(largest_info_gain)
+        return best_attribute
 
     def get_info_gain(self, binary_target, examples, initial_entropy, column):
         c_p = 0
@@ -157,4 +177,4 @@ class Tree:
         return info_gain
 
 a  = Tree(mat_x, mat_y)
-a.choose_best_decision_attribute(mat_x, attributes, mat_y)
+# a.choose_best_decision_attribute(mat_x, attributes, mat_y)
