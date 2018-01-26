@@ -1,37 +1,22 @@
 from __future__ import division
 import numpy as np
 
+from scipy import stats
 import scipy.io as sio
 
 mat = sio.loadmat('Data/cleandata_students.mat')
 
-
-print(mat)
-
 mat_x = mat['x']
-print(mat_x)
-
-print(mat_x[1])
-
 mat_y = mat['y']
-print(mat_y)
-
 
 counter = 1
-attributes = [None] * 45
+
+attributes2 = np.arange(1,46)
+
 for i in range(0,45):
-    attributes[i] = counter
+    attributes2[i] = counter
     counter = counter + 1
 
-print("Attributes")
-print(attributes)
-
-# print(mat_y.shape)
-# vector = np.arrange(10)
-# vector.shape(10,)
-print(sio.whosmat('Data/cleandata_students.mat'))
-
-# In training function
 
 def transform_emotion(vector, emotion):
     for v in range(len(vector)):
@@ -41,98 +26,102 @@ def transform_emotion(vector, emotion):
             vector[v] = 1
     return vector
 
-transform_emotion(mat_y, 4)
-print(mat_y)
+transform_emotion(mat_y, 5)
 
 class Tree:
-    def __init__(self, mat_x, mat_y):
-        # self.op = 0
-        self.op = self.decision_tree_learning(mat_x, attributes, mat_y)
+    def __init__(self, mat_x, mat_y, attributes):
+        self.op = []
         self.kids = []
-        # 1 or 0
         self.leaf = []
+        self.attr = attributes
+
+        self.decision_tree_learning(mat_x, attributes, mat_y)
 
     def decision_tree_learning(self, examples, attributes, binary_target):
-        # if(self.is_same_binary(binary_target)):
-        #     leaf = binary_target[0]
-        #     return leaf
-        #
-        # elif(np.binary_target([])):
-        #     leaf =  majority_value(binary_target)
-        #     return leaf
+        if(self.is_same_binary(binary_target)):
+            print("is same binary")
+            self.leaf = binary_target[0]
+            return 0
 
-        # else:
-        # best_attribute = choose_best_decision_attribute(examples, attributes, binary_target)
-        print("attributes length ", len(attributes))
+        elif(attributes.size == 0):
+            self.leaf =  majority_value(binary_target)
+            return 0
+
 
         self.op = self.choose_best_decision_attribute(examples, attributes, binary_target)
+
         # for i in range(0,1):
-        examples_trim_0 = []
-        binary_target_trim_0 = []
-        examples_trim_1 = []
-        binary_target_trim_1 = []
-        self.split_data(examples, binary_target, 0, examples_trim_0, binary_target_trim_0)
-        self.split_data(examples, binary_target, 1, examples_trim_1, binary_target_trim_1)
-        print(len(examples_trim_0))
-        print(len(examples_trim_1))
-        if len(examples_trim_0) == 0:
-            # self.leaf =
+        examples_trim_0 = np.empty((0, 45), int)
+        binary_target_trim_0 =  np.empty((0, 1), int)
+        examples_trim_1 =  np.empty((0, 45), int)
+        binary_target_trim_1 = np.empty((0, 1), int)
 
-
+        examples_trim_1, binary_target_trim_1 = self.split_data(examples, binary_target, 1)
+        examples_trim_0, binary_target_trim_0 = self.split_data(examples, binary_target, 0)
+        if (examples_trim_1.shape[0] == 0) or (examples_trim_0.shape[0] == 0) :
+            print("kjfdsaj;fja;")
+            self.leaf = stats.mode(binary_target)
+        else:
+            new_attributes = self.update_attribute(attributes)
+            self.kids.append(Tree(examples_trim_0, binary_target_trim_0, new_attributes))
+            self.kids.append(Tree(examples_trim_1, binary_target_trim_1, new_attributes))
         return 0
 
-    def split_data(self, examples, binary_target, binary, examples_trim, binary_target_trim):
+    def update_attribute(self, attributes):
+        for idx, val in enumerate(attributes2):
+            if val == self.op:
+                return np.delete(attributes, idx)
+
+    # def split_data(self, examples, binary_target, binary, examples_trim, binary_target_trim):
+    def split_data(self, examples, binary_target, binary):
+        binary_target_trim =  np.empty((0, 1), int)
+        examples_trim =  np.empty((0, 45), int)
         i = 0
         counter = 0
         for row in examples:
             if examples[i][self.op] == binary:
-                # foo = examples[:, row]
-                examples_trim.append(row)
-                binary_target_trim.append(binary_target[i])
+                examples_trim = np.append(examples_trim, np.array([row]), axis=0)
+                binary_target_trim = np.append(binary_target_trim, [binary_target[i]], axis=0)
+                #examples_trim.append(row)
+                #binary_target_trim.append(binary_target[i])
                 counter += 1
                 # binary_target_trim.append(binary_target[i])
             i += 1
+        return examples_trim, binary_target_trim
+
 
 
 
     def is_same_binary(self, binary_target):
          first_value = binary_target[0]
          for i in binary_target:
-             if binary_target[i] == first_value:
+             if i == first_value:
                  continue
              else:
                  return False
          return True
 
     def majority_value(self, binary_target):
-        return sio.stats.mode(binary_target)
+        return stats.mode(binary_target)
 
     def choose_best_decision_attribute(self, examples, attributes, binary_target):
         counter_0 = 0
         counter_1 = 0
-        print("binary target", binary_target)
         for x in binary_target:
             if x == 0:
                 counter_0 += 1
             else:
                 counter_1 +=1
-
-        print(counter_0)
-        print(counter_1)
-        print(counter_0/len(binary_target))
         initial_entropy = -(counter_0/len(binary_target))*np.log2(counter_0/len(binary_target))-(counter_1/len(binary_target))*np.log2(counter_1/len(binary_target))
-        print(initial_entropy)
 
         largest_info_gain = 0
         best_attribute = 0
-        # TODO fix indx
-
-        for idx in range(len(attributes)):
-            info_gain = self.get_info_gain(binary_target, examples, initial_entropy, idx)
+        for idx, val in enumerate(attributes):
+        # for idx in range(len(attributes)):
+            info_gain = self.get_info_gain(binary_target, examples, initial_entropy, val)
             if(largest_info_gain < info_gain):
-                best_attribute = idx
+                best_attribute = val
                 largest_info_gain = info_gain
-
         return best_attribute
 
     def get_info_gain(self, binary_target, examples, initial_entropy, column):
@@ -143,10 +132,10 @@ class Tree:
         c_p_0_n = 0
         c_n_0_p = 0
 
-        column = examples[:, column]
+        column2 = examples[:, column-1]
 
         i=0
-        for r in column:
+        for r in column2:
             if r == 1:
                 c_p += 1
                 if binary_target[i] == 1:
@@ -161,20 +150,13 @@ class Tree:
 
         c_n_0_n = c_n - c_n_0_p
 
-        # print(c_n) # negative attribute examples
-        # print(c_p) # postive attribute examples
-        # print(c_p_0_n) # positive attribute, negative  examples
-        # print(c_n_0_n) # negative attribute, negative target
-        # print(c_p_0_p) # positive attibute, positive target
-        # print(c_n_0_p) # negative attribute, positive target
-
-        i1 = - (c_p_0_p /(c_p_0_p + c_p_0_n))*np.log2(c_p_0_p/(c_p_0_p + c_p_0_n)) - (c_p_0_n /(c_p_0_p + c_p_0_n))*np.log2(c_p_0_n/(c_p_0_p + c_p_0_n))
-        i0 = - (c_n_0_p /(c_n_0_p + c_n_0_n))*np.log2(c_n_0_p/(c_n_0_p + c_n_0_n)) - (c_n_0_n /(c_n_0_p + c_n_0_n))*np.log2(c_n_0_n/(c_n_0_p + c_n_0_n))
-
-        after_entropy = ((c_n)/len(binary_target))*i0 +  ((c_p)/len(binary_target))* i1
+        after_entropy = 0
+        if  (c_p_0_p + c_p_0_n) != 0 and (c_n_0_p + c_n_0_n) != 0:
+            i1 = - (c_p_0_p /(c_p_0_p + c_p_0_n))*np.log2(c_p_0_p/(c_p_0_p + c_p_0_n)) - (c_p_0_n /(c_p_0_p + c_p_0_n))*np.log2(c_p_0_n/(c_p_0_p + c_p_0_n))
+            i0 = - (c_n_0_p /(c_n_0_p + c_n_0_n))*np.log2(c_n_0_p/(c_n_0_p + c_n_0_n)) - (c_n_0_n /(c_n_0_p + c_n_0_n))*np.log2(c_n_0_n/(c_n_0_p + c_n_0_n))
+            after_entropy = ((c_n)/len(binary_target))*i0 +  ((c_p)/len(binary_target))* i1
 
         info_gain = initial_entropy - after_entropy
         return info_gain
 
-a  = Tree(mat_x, mat_y)
-# a.choose_best_decision_attribute(mat_x, attributes, mat_y)
+a  = Tree(mat_x, mat_y, attributes2)
