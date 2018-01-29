@@ -30,6 +30,17 @@ def transform_emotion(vector, emotion):
             transform_vector[v] = 1
     return transform_vector
 
+def split_binary_target(vector):
+    targets_temp = np.array_split(x2,10)
+    targets = np.array(targets_temp)
+
+    for i in range(0, 10):
+        training_array = np.zeros(shape=(0,1))
+        test_dataset = targets[i] # testing dataset
+        for split in range(len(targets)):
+            if split != i:
+                training_array = np.concatenate((training_array, targets[split]))
+
 class Tree:
     def __init__(self, mat_x, mat_y, attributes):
         self.op = []
@@ -205,11 +216,53 @@ def validate_tree(tree, examples, results):
     print(count)
 
 
+def testTrees(T,x2):
+    for i in range(len(x2)):
+
+
+
+def split_data(x2):
+    # split_into_10(x2, 45)
+    split_array_temp = np.array_split(x2,10)
+    split_array = np.array(split_array_temp)
+
+    for i in range(0, 10):
+        training_array = np.zeros(shape=(0,45))
+        test_dataset = split_array[i] # testing dataset
+        for split in range(len(split_array)):
+            if split != i:
+                training_array = np.concatenate((training_array, split_array[split]))
+
+
+
+
+        # training_dataset = np.combile(split_data)# Rest for training
+
+
+
+trees = []
 for it in range(1,7):
     transform_clean_mat_y = transform_emotion(clean_mat_y, it)
     transform_dirty_mat_y = transform_emotion(dirty_mat_y, it)
+    # split_binary_target(train)
 
-    a  = Tree(clean_mat_x, transform_clean_mat_y, attributes2)
+    for i in range(0, 10):
+        training_data, test_data, binary_traning, binary_test = split_data(clean_mat_x)
+        # Training it
+        # a  =  Tree(clean_mat_x, transform_clean_mat_y, attributes2)
+        a  =  Tree(training_data, binary_traning, attributes2)
+        predictions = testTrees(T, x2)
+    trees.append(a)
 
-    #validate_tree(a, clean_mat_x, transform_clean_mat_y)
-    validate_tree(a, dirty_mat_x, transform_dirty_mat_y)
+    # print("Emotion: ", it, " ", a.op)
+    # validate_tree(a, clean_mat_x, transform_clean_mat_y)
+    # validate_tree(a, dirty_mat_x, transform_dirty_mat_y)
+
+# for it in range(1,7):
+#     transform_clean_mat_y = transform_emotion(clean_mat_y, it)
+#     transform_dirty_mat_y = transform_emotion(dirty_mat_y, it)
+#
+#     a  = Tree(clean_mat_x, transform_clean_mat_y, attributes2)
+#     print("Emotion: ", it, " ", a.op)
+#     #validate_tree(a, clean_mat_x, transform_clean_mat_y)
+#     validate_tree(a, dirty_mat_x, transform_dirty_mat_y)
