@@ -13,6 +13,8 @@ dirty_mat_x = dirty_mat['x']
 dirty_mat_y = dirty_mat['y']
 
 counter = 1
+folds = 2
+print(clean_mat_y.shape)
 
 attributes2 = np.arange(1,46)
 
@@ -22,7 +24,7 @@ for i in range(0,45):
 
 
 def transform_emotion(vector, emotion):
-    transform_vector = np.empty(shape=vector.shape)
+    transform_vector = np.empty(shape=vector.shape, dtype=int)
     for v in range(len(vector)):
         if vector[v] != emotion:
             transform_vector[v] = 0
@@ -36,7 +38,6 @@ class Tree:
         self.kids = []
         self.leaf = []
         self.attr = attributes
-
         self.decision_tree_learning(mat_x, attributes, mat_y)
 
     def majority_value(self, binary_target):
@@ -46,25 +47,21 @@ class Tree:
 
         if(examples.shape[0] == 0):
             self.leaf = self.majority_value(binary_target)
-            # print(self.leaf)
-            # print(len(examples))
+            # print("1: ", self.leaf)
             return 0
 
         if(self.is_same_binary(binary_target)):
             self.leaf = binary_target[0]
-            # print(self.leaf)
-            # print(len(examples))
+            # print("2: ", self.leaf)
             return 0
 
         elif(attributes is None):
             self.leaf = self.majority_value(binary_target)
-            # print(self.leaf)
-            # print(len(examples))
+            # print("3: ", self.leaf)
             return 0
 
 
         self.op = self.choose_best_decision_attribute(examples, attributes, binary_target)
-        # print("No. Attributes: ", len(attributes), "Best Attr: ", self.op, "No. Examples: ", len(examples))
 
         examples_trim_1, binary_target_trim_1 = self.split_data(examples, binary_target, 1)
         examples_trim_0, binary_target_trim_0 = self.split_data(examples, binary_target, 0)
@@ -128,10 +125,8 @@ class Tree:
 
         largest_info_gain = 0
         best_attribute = 0
-        # print("Initial Entropy: ", initial_entropy)
         for idx, val in enumerate(attributes):
             info_gain = self.get_info_gain(binary_target, examples, initial_entropy, val)
-            # print("Info gain: ", info_gain)
             if(largest_info_gain < info_gain):
                 best_attribute = val
                 largest_info_gain = info_gain
@@ -163,15 +158,17 @@ class Tree:
         c_p_0_n = c_p - c_p_0_p
         c_n_0_n = c_n - c_n_0_p
 
-        #after_entropy = 0
+        # if all the examples either have the attribute or all the examples do not have the attribute, then no entropy gain
         after_entropy = initial_entropy
         if (c_p_0_p + c_p_0_n) != 0 and (c_n_0_p + c_n_0_n) != 0:
+            # Entropy is 0 if it contains only positive or only negative examples
             if (c_p_0_p) == 0 or (c_p_0_n == 0):
                 i1 = 0
             else:
                 i1 = - (c_p_0_p /(c_p_0_p + c_p_0_n))*np.log2(c_p_0_p/(c_p_0_p + c_p_0_n)) - (c_p_0_n /(c_p_0_p + c_p_0_n))*np.log2(c_p_0_n/(c_p_0_p + c_p_0_n))
 
-            if (c_n_0_p) == 0 or (c_n_0_n == 0):
+            # Entropy is 0 if it contains only positive or only negative examples
+            if (c_n_0_p == 0) or (c_n_0_n == 0):
                 i0 = 0
             else:
                 i0 = - (c_n_0_p /(c_n_0_p + c_n_0_n))*np.log2(c_n_0_p/(c_n_0_p + c_n_0_n)) - (c_n_0_n /(c_n_0_p + c_n_0_n))*np.log2(c_n_0_n/(c_n_0_p + c_n_0_n))
@@ -185,7 +182,27 @@ class Tree:
         print(self.op)
 
 
+def prediction(tree, examples):
+    root = tree
+    i=0
+    example = np.array(examples)
+    predictions = np.empty((0, 1), int)
+    for row in examples:
+        tree = root
+        # while we still have subtrees
+        while len(tree.leaf) == 0:
+            # if the example is negative for the root attribute the choose the first subtree
+            if example.item((i, tree.op -1)) == 0:
+                tree = tree.kids[0]
+            else:
+                tree = tree.kids[1]
+        predictions = np.append(predictions, np.array(tree.leaf.item(0)))
+        predictions = np.reshape(predictions,(len(predictions),1))
+        i += 1
+    return prediction
+
 def validate_tree(tree, examples, results):
+    print("No of Examples: ", len(examples))
     count = 0
     root = tree
     i=0
@@ -197,52 +214,45 @@ def validate_tree(tree, examples, results):
                 tree = tree.kids[0]
             else:
                 tree = tree.kids[1]
-        # print(i, " LEAF: ", tree.leaf, "Results: ", results.item(i))
         if tree.leaf.item(0) != results.item(i):
             count += 1
-            #print(i, " LEAF: ", tree.leaf, "Results: ", results.item(i))
         i += 1
     print(count)
 
-# def testTrees(T,x2):
-#     for i in range(len(x2)):
+trees = np.empty(shape=(folds,6), dtype=object)
 
-trees = []
-for it in range(1,7):
-    transform_clean_mat_y = transform_emotion(clean_mat_y, it)
-    transform_dirty_mat_y = transform_emotion(dirty_mat_y, it)
+# Split all the data into 10 folds
+splitted_training_data_tmp = np.array_split(clean_mat_x, folds)
+splitted_training_data = np.array(splitted_training_data_tmp)
 
-    # Split all the data into 10 folds
-    splitted_training_data_tmp = np.array_split(clean_mat_x,10)
-    splitted_training_data = np.array(splitted_training_data_tmp)
+# Split binary targets into 10 folds
+splitted_mat_y_tmp = np.array_split(clean_mat_y, folds)
+splitted_mat_y = np.array(splitted_mat_y_tmp)
 
-    # Split binary targets into 10 folds
-    splitted_binary_target_tmp = np.array_split(transform_clean_mat_y, 10)
-    splitted_binary_target = np.array(splitted_binary_target_tmp)
-
-    for i in range(0, 10):
-        training_9_folds = np.zeros(shape=(0,45))
-        binary_9_folds = np.zeros(shape=(0,1))
+for i in range(0, folds):
+    print("Fold: ", i)
+    for it in range(1, 7):
+        # training_9_folds = np.zeros(shape=(0,45))
+        # binary_9_folds = np.zeros(shape=(0,1))
+        training_9_folds = np.empty((0,45), int)
+        binary_9_folds = np.empty((0,1), int)
         # Use 10% of data for testing
-        test_dataset = splitted_training_data[i]
-        binary_test = splitted_binary_target[i]
+        examples_test = splitted_training_data[i]
+        binary_test = transform_emotion(splitted_mat_y[i], it)
+
         # The rest (90%) of the data is for training
         for index in range(len(splitted_training_data)):
             if index != i:
+                transform_splitted_clean_mat_y_index = transform_emotion(splitted_mat_y[index], it)
                 training_9_folds = np.concatenate((training_9_folds, splitted_training_data[index]))
-                binary_9_folds = np.concatenate((binary_9_folds, splitted_binary_target[index]))
+                binary_9_folds = np.concatenate((binary_9_folds, transform_splitted_clean_mat_y_index))
         # Training
-        tree  =  Tree(training_9_folds, binary_9_folds, attributes2)
-        # print("Emotion: ", it, " ", tree.op)
-        predictions = testTrees(T, x2)
-    # validate_tree(a, clean_mat_x, transform_clean_mat_y)
-    # validate_tree(a, dirty_mat_x, transform_dirty_mat_y)
+        a = Tree(training_9_folds, binary_9_folds, attributes2)
+        trees[i][it-1] = a
 
-# for it in range(1,7):
-#     transform_clean_mat_y = transform_emotion(clean_mat_y, it)
-#     transform_dirty_mat_y = transform_emotion(dirty_mat_y, it)
-#
-#     a  = Tree(clean_mat_x, transform_clean_mat_y, attributes2)
-#     print("Emotion: ", it, " ", a.op)
-#     #validate_tree(a, clean_mat_x, transform_clean_mat_y)
-#     validate_tree(a, dirty_mat_x, transform_dirty_mat_y)
+
+for it in range(1, 7):
+    for fold in range(0,folds):
+        binary_test = transform_emotion(splitted_mat_y[fold], it)
+        prediction(trees[fold][it-1], splitted_training_data[fold])
+        # validate_tree(trees[fold][it-1], splitted_training_data[fold], binary_test)
