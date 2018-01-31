@@ -14,7 +14,6 @@ dirty_mat_y = dirty_mat['y']
 
 counter = 1
 folds = 2
-print(clean_mat_y.shape)
 
 attributes2 = np.arange(1,46)
 
@@ -44,7 +43,6 @@ class Tree:
         return stats.mode(binary_target)[0][0]
 
     def decision_tree_learning(self, examples, attributes, binary_target):
-
         if(examples.shape[0] == 0):
             self.leaf = self.majority_value(binary_target)
             # print("1: ", self.leaf)
@@ -181,7 +179,7 @@ class Tree:
     def visualise_tree(self, attr_num):
         print(self.op)
 
-
+# returns a list of predictions
 def prediction(tree, examples):
     root = tree
     i=0
@@ -197,12 +195,11 @@ def prediction(tree, examples):
             else:
                 tree = tree.kids[1]
         predictions = np.append(predictions, np.array(tree.leaf.item(0)))
-        predictions = np.reshape(predictions,(len(predictions),1))
+        predictions = np.reshape(predictions, (len(predictions),1))
         i += 1
-    return prediction
+    return predictions
 
 def validate_tree(tree, examples, results):
-    print("No of Examples: ", len(examples))
     count = 0
     root = tree
     i=0
@@ -219,6 +216,8 @@ def validate_tree(tree, examples, results):
         i += 1
     print(count)
 
+
+
 trees = np.empty(shape=(folds,6), dtype=object)
 
 # Split all the data into 10 folds
@@ -229,6 +228,7 @@ splitted_training_data = np.array(splitted_training_data_tmp)
 splitted_mat_y_tmp = np.array_split(clean_mat_y, folds)
 splitted_mat_y = np.array(splitted_mat_y_tmp)
 
+# creates a matrix of decision trees (one per fold)
 for i in range(0, folds):
     print("Fold: ", i)
     for it in range(1, 7):
@@ -248,11 +248,33 @@ for i in range(0, folds):
                 binary_9_folds = np.concatenate((binary_9_folds, transform_splitted_clean_mat_y_index))
         # Training
         a = Tree(training_9_folds, binary_9_folds, attributes2)
+        # trees is a folds * 6 matrix
         trees[i][it-1] = a
 
-
-for it in range(1, 7):
-    for fold in range(0,folds):
+# prints confusion matrix
+for fold in range(0, folds):
+    confusion_matrix = np.empty((6, 6), int)
+    for it in range(1, 7):
+        prediction_results = prediction(trees[fold][it-1], splitted_training_data[fold])
         binary_test = transform_emotion(splitted_mat_y[fold], it)
-        prediction(trees[fold][it-1], splitted_training_data[fold])
-        # validate_tree(trees[fold][it-1], splitted_training_data[fold], binary_test)
+        iterator = 0
+        for example in splitted_mat_y[fold]:
+            if prediction_results[iterator] == 1:
+                confusion_matrix[example[0]-1][it-1] += 1
+            iterator += 1
+    print(confusion_matrix)
+    print(np.sum(confusion_matrix))
+
+
+# create decision trees using clean data set
+# test decision trees (against clean data set!)
+for it in range(1, 7):
+    binary_targets = transform_emotion(clean_mat_y, it)
+    a = Tree(clean_mat_x, binary_targets, attributes2)
+    binary_targets = transform_emotion(dirty_mat_y, it)
+    validate_tree(a, dirty_mat_x, binary_targets)
+
+# for it in range(1, 7):
+#     for fold in range(0,folds):
+#         binary_test = transform_emotion(splitted_mat_y[fold], it)
+#         validate_tree(trees[fold][it-1], splitted_training_data[fold], binary_test)
