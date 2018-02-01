@@ -13,7 +13,7 @@ dirty_mat_x = dirty_mat['x']
 dirty_mat_y = dirty_mat['y']
 
 counter = 1
-folds = 2
+folds = 10
 
 attributes2 = np.arange(1,46)
 
@@ -252,8 +252,9 @@ for i in range(0, folds):
         trees[i][it-1] = a
 
 # prints confusion matrix
+confusion_matrix = np.empty((6, 6), int)
 for fold in range(0, folds):
-    confusion_matrix = np.empty((6, 6), int)
+    #confusion_matrix = np.empty((6, 6), int)
     for it in range(1, 7):
         prediction_results = prediction(trees[fold][it-1], splitted_training_data[fold])
         binary_test = transform_emotion(splitted_mat_y[fold], it)
@@ -262,8 +263,8 @@ for fold in range(0, folds):
             if prediction_results[iterator] == 1:
                 confusion_matrix[example[0]-1][it-1] += 1
             iterator += 1
-    print(confusion_matrix)
-    print(np.sum(confusion_matrix))
+print(confusion_matrix)
+print(np.sum(confusion_matrix))
 
 
 # create decision trees using clean data set
