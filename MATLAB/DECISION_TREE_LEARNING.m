@@ -19,7 +19,7 @@ function [ tree ] = DECISION_TREE_LEARNING( examples,attributes,binary_targets)
         consistent_targets = binary_targets(examples(:,best_attribute) == attribute_value,:);
         remaining_attributes = attributes(attributes ~= attributes(best_attribute));
         
-        disp(size(consistent_examples,2));
+%         disp(size(consistent_examples,2));
         
         if size(consistent_examples,1) == 0
             majority_value = mode(binary_targets);
