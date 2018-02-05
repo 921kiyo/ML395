@@ -1,0 +1,46 @@
+function [predictions] = testTrees(T, x2)
+
+binary_prediction_set = zeros(size(x2,1),6);
+
+
+for i = 1:length(T)
+    pred = prediction(T(i), x2);
+    binary_prediction_set(:,i) = pred;
+    
+    %disp(binary_prediction_set);
+    %noisy_binary = binary_targets(i, x2);
+    %accuracy = evaluate(pred, noisy_binary);
+    %disp(accuracy);
+end
+
+[r, c] = size(x2);
+
+prediction_set = combine_predictions(
+
+
+
+zeros(size(x2,1),1);
+
+% combining the trees:
+for i = 1:r
+    % i.e no trees predict that the example has the emotion
+    if(sum(binary_prediction_set(i,:)) == 0)
+        % arbitrarily choose the first emotion
+        prediction_set(i) = 1;        
+    else
+        for j = 1:6
+            if binary_prediction_set(i,j) == 1
+                prediction_set(i) = j;
+            end
+        end
+    end
+end
+
+
+                    
+            
+                
+
+
+end
+

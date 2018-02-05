@@ -1,38 +1,17 @@
 function [ prediction_result ] = prediction( tree, examples )
 %PREDICTION Summary of this function goes here
 %   Detailed explanation goes here
- 
     root = tree;
-    disp(tree);
-    i = 1;
-    prediction_result = int16.empty(0,1);
+    len_examples = size(examples, 1);
+    prediction_result = transpose(1:len_examples);
     
-    for row = 1:size(examples, 1)
+    for row = 1:len_examples
         tree = root;
         % While we still have subtrees
-
-         while ~isempty(tree.class)
-%              tree = tree.kids(1);
-             % if the example is negative for the root attribute, choose
-             % the first subtree
-%              size(examples)
-             disp("before");
-             disp(tree(1).class);
-             disp("after");
-             if tree(1).class == -1
-                 tree = tree(1).kids;
-             else
-                 tree = tree(2).kids;
-%              examples(i, tree.op);
-%                if(examples(i, tree.op)) == -1
-%                    tree = tree.kids(1);
-%                else
-%                    tree = tree.kids(2);
-%                end
-             end
+         while tree.op ~= -1
+             tree = tree.kids(examples(row,tree.op)+1);
          end
-         prediction_result(row, 1) = tree.class;
-         i = i + 1;
+         prediction_result(row,1) = tree.class;
     end   
 end
 

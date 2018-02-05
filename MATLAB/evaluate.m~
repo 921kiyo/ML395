@@ -1,0 +1,9 @@
+function [accuracy] = evaluate(predictions, labels)
+
+for i=1:size(predictions,1)
+    if predictions(i)
+end
+
+
+end
+
