@@ -17,6 +17,8 @@ end
 
 h = heatmap(confusion);
 %h.Colormap = col_map;
+xlabel('Predicted Class')
+ylabel('Actual Class')
 colorbar('off')
 
 end
