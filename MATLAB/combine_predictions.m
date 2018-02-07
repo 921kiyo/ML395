@@ -21,11 +21,5 @@ for i = 1:l
 end
 
 
-                    
-        
-
-
-
-
 end
 
