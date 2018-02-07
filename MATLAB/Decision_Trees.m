@@ -1,49 +1,29 @@
-clc
-clear tree
-
 data = load('Data/cleandata_students.mat');
 noisy_data = load('Data/noisydata_students.mat');
+
+examples = data.x;
+y = data.y;
+
 noisy_examples = noisy_data.x;
 noisy_y = noisy_data.y;    
 
-examples = data.x;
 attributes = transpose(1:size(examples,2));
-y = data.y;
-
-% view(tree.kids)
-num_emotion = 6;
-%K = 10;
-binary = binary_targets(5,y);
-
-
-%data_rep = [binary,examples(:,9)];
-
-% n = 70
-% examples_sub = examples(1:n,:);
-% y_sub = y(1:n,:);
-binary = binary_targets(6,y);
-% 
-tree = DECISION_TREE_LEARNING(examples, attributes, binary);
 
 tree_set = tree_set_gen(examples, attributes, y);
+multi_class_predictions = testTrees(tree_set, noisy_examples);
+confusion_matrix(multi_class_predictions, noisy_y, 1);
 
-testTrees(tree_set, examples)
 
-disp("trees")
-for i = 1:6
-    disp(i)
-    pred = prediction(tree_set(i), noisy_examples);
-    noisy_binary = binary_targets(i, noisy_y);
-    accuracy = evaluate(pred, noisy_binary);
-    disp(accuracy);
-end
 
-disp("CHECK")
-preds = prediction(tree, noisy_examples);
-acc2 = evaluate(preds, noisy_binary);
-disp(acc2)
 
-res = testTrees(tree_set);
+
+
+%disp("CHECK")
+%preds = prediction(tree, noisy_examples);
+%acc2 = evaluate(preds, noisy_binary);
+%disp(acc2)
+
+%res = testTrees(tree_set, examples);
 
 
 %{

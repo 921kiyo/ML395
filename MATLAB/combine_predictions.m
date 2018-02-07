@@ -13,7 +13,7 @@ for i = 1:l
         result(i) = 1;        
     else
         for j = 1:6
-            if binary_prediction(i,j) == 1
+            if binary_predictions(i,j) == 1
                 result(i) = j;
             end
         end
