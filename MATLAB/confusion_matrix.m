@@ -7,7 +7,7 @@ for i=1:6
     for j = 1:6
         n = 0;
         for k=1:l
-            if (predictions(k) == i) && (labels(k) == j)
+            if((labels(k) == i) && (predictions(k) == j))
                 n = n+1;
             end
         end
