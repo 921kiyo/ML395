@@ -53,9 +53,9 @@
 %plot(transpose(1:size(checks,1)),checks(:,1),transpose(1:size(checks,1)),checks(:,2))
 
 tree_set = tree_set_gen(examples, attributes, y);
-[multi_class_predictions, binary_prediction ]= testTrees(tree_set, noisy_examples);
-% hello = testTrees(tree_set, noisy_examples);
-confusion_matrix(multi_class_predictions, noisy_y, 1);
+multi_class_predictions = testTrees3(tree_set, examples(901:end, :), 1);
+% multi_class_predictions = testTrees(tree_set, noisy_examples);
+% confusion_matrix(multi_class_predictions, noisy_y, 1);
 
 
 %{

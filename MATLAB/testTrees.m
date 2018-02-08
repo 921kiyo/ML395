@@ -1,4 +1,4 @@
-function [predictions,binary_prediction_set ] = testTrees(T, x2)
+function [predictions] = testTrees(T, x2)
 
 binary_prediction_set = zeros(size(x2,1),6);
 
