@@ -1,4 +1,4 @@
-function [overall_accuracy, overall_error, accuracy, recall, precision, f_1] = evaluate_metrics(predictions, labels, classes)
+function [overall_accuracy, accuracy, recall, precision, f_1] = evaluate_metrics(predictions, labels, classes)
 
 len = length(predictions);
 recall = zeros(6,1);
@@ -32,7 +32,6 @@ for class=1:classes
     
 end
 overall_accuracy = sum(predictions == labels)/len;
-overall_error = 1 - overall_accuracy;
 
 end
 

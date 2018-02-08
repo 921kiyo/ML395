@@ -1,4 +1,6 @@
-    data = load('Data/noisydata_students.mat');
+    %GET DATA
+    
+    data = load('Data/cleandata_students.mat');
     %data = load('Data/noisydata_students.mat');
     
     examples = data.x;
@@ -7,15 +9,14 @@
 
     N_folds = 10;
     %Create tables of metrics to evaluate on each fold
-    cv_total_accuracy = zeros(N_folds,1);
-    cv_individual_accuracy = zeros(N_folds,6);
+    cv_accuracy = zeros(N_folds,6);
     cv_precision = zeros(N_folds,6);
     cv_recall = zeros(N_folds,6);
-    cv_f1 = zeros(N_folds,6);
+    cv_f1 = zeros(10,6);
     len = length(examples);
-    partition = cvpartition(len, 'KFold', N_folds);
+    partition = cvpartition(len, 'KFold', 10);
 
-    for t=1:N_folds
+    for t=1:partition.NumTestSets
 
         train_idx = partition.training(t);
         train_ex = examples(train_idx,:);
@@ -28,39 +29,19 @@
         tree_set = tree_set_gen(train_ex, attributes, train_lab);
         
         tree_predictions = testTrees(tree_set, test_ex);
-        [fold_total_acc, fold_individual_accuracy, fold_recall, fold_precision, fold_f1] = evaluate_metrics(tree_predictions, test_lab, 6);
+        [total_acc, total_error, fold_accuracy, fold_recall, fold_precision, fold_f1] = evaluate_metrics(tree_predictions, test_lab, 6);
 
-        cv_total_accuracy(t,1) = fold_total_acc;
-        cv_individual_accuracy(t,:) = fold_individual_accuracy;
+        cv_accuracy(t,:) = fold_accuracy;
         cv_recall(t,:) = fold_recall;
         cv_precision(t,:) = fold_precision;
         cv_f1(t,:) = fold_f1;
 
     end
 
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    %total_cv_precision = sum(cv_precision,1)/N_folds;
-    %total_cv_accuracy = sum(cv_accuracy,1)/N_folds;
-    %total_cv_recall = sum(cv_recall,1)/N_folds;
-    %total_cv_f1 = sum(cv_f1,1)/10;
+    total_cv_precision = sum(cv_precision,1)/10;
+    total_cv_accuracy = sum(cv_accuracy,1)/10;
+    total_cv_recall = sum(cv_recall,1)/10;
+    total_cv_f1 = sum(cv_f1,1)/10;
 
     %checks = [checks;sum(total_cv_accuracy)/6,total_acc_2];
     %csvwrite("data.csv",checks)
