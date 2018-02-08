@@ -10,7 +10,8 @@ noisy_y = noisy_data.y;
 attributes = transpose(1:size(examples,2));
 
 tree_set = tree_set_gen(examples, attributes, y);
-multi_class_predictions = testTrees(tree_set, noisy_examples);
+[multi_class_predictions, binary_prediction ]= testTrees(tree_set, noisy_examples);
+% hello = testTrees(tree_set, noisy_examples);
 confusion_matrix(multi_class_predictions, noisy_y, 1);
 
 

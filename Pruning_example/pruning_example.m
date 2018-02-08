@@ -21,7 +21,6 @@ plot(nodes(bestLevel+1),cost(bestLevel+1),'ks');
 xlabel('Tree size (number of terminal nodes)')
 ylabel('Cost')
 grid on
-
+hold on 
 plot(nodes2,cost2,'r-x','MarkerSize',8)
-plot(nodes2(bestLevel2+1),cost2(bestLevel2+1),'ks');
 
