@@ -7,7 +7,7 @@ function [ prediction_result ] = prediction( tree, examples )
     
     for row = 1:len_examples
         tree = root;
-        % While we still have subtrees
+        % Iterate through the subtrees
          while tree.op ~= -1
              tree = tree.kids(examples(row,tree.op)+1);
          end
