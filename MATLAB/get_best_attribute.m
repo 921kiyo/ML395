@@ -1,4 +1,4 @@
-function [best_attribute_] = get_best_attribute(examples,attributes,binary)
+function [best_attribute_] = get_best_attribute(examples_,attributes,binary)
 %UNTITLED6 Summary of this function goes here
 %   Detailed explanation goes here
     max_gain = 0; 
@@ -8,7 +8,7 @@ function [best_attribute_] = get_best_attribute(examples,attributes,binary)
     for attr=1:size(attributes,1)
         %disp(attributes(attr));
        
-        col = examples(:,attributes(attr));
+        col = examples_(:,attributes(attr));
         p_1 = size(col(col==1 & binary == 1),1);
         n_1 = size(col(col==1 & binary == 0),1);
         p_0 = size(col(col==0 & binary == 1),1);
