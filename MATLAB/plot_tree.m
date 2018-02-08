@@ -8,8 +8,7 @@ examples_sub = examples(1:n,:);
 y_sub = y(1:n,:);
 
 
-for i= 1:6
-    emotion = i;
+for emotion= 6:6
     binary_sub = binary_targets(emotion, y_sub);
     t = DECISION_TREE_LEARNING(examples_sub, attributes,  binary_sub);
 
@@ -19,6 +18,9 @@ for i= 1:6
     hFigure = figure('Color','w');
     hAxes = axes('Parent',hFigure,'YColor','w','LineWidth',2);
     hAxes.Visible = 'off';
+    
+    %xlim([0.1 0.8])
+    %ylim([0 10])
 
     x_nodes = [];
     y_nodes = [];
@@ -39,6 +41,8 @@ for i= 1:6
     plot(hAxes,x,y_nodes,'o','MarkerFaceColor',[0.96 0.96 0.86],...
           'MarkerSize',15,'MarkerEdgeColor','k','LineWidth',1);
 
+    
+
     for i=1:length(labs)    
         [y1,y2,x2] = get_node_position(nod,x,i);
 
@@ -55,4 +59,7 @@ for i= 1:6
     end
 
     hold off
+    
+    print(num2str(emotion),'-depsc')
+    
 end

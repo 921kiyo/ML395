@@ -16,8 +16,8 @@ function [y1,y2,x2 ] = get_node_position( nods,x,index )
         depth = depth +1;
         count = count+1;
     end
-    y1 = 10-depth * 0.1;
-    y2 = 10-(depth-1)*0.1;
+    y1 = (10-depth * 0.1)^2;
+    y2 = (10-(depth-1)*0.1)^2;
     
     disp(x2)
 end
