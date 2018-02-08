@@ -3,9 +3,12 @@ function [out_nodes, out_labels] = tree_nodes(tree, root_id)
     
     if tree.op ~= -1
         out_labels = tree.op;
-    
     else
-        out_labels = tree.class;
+        if tree.class == 1
+            out_labels = -1;
+        else
+            out_labels = -2;
+        end
     end
     
     if not(isempty(tree.kids))
