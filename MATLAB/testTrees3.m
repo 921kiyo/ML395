@@ -1,5 +1,12 @@
-function [result] = combine_predictions(binary_predictions)
-% Convert set of predictions to an integer overall result
+function [ output_args ] = testTrees3( binary_target, binary_predictions )
+%TESTTREES3 Summary of this function goes here
+%   Detailed explanation goes here
+classes = [0 1];
+
+for i = 1:6
+   evaluate_metrics()
+    
+end
 
 l = size(binary_predictions,1);
 
@@ -28,9 +35,6 @@ for i = 1:l
         result(i) = cell2mat(predictions(index));
     end
 end
-
-% disp(result);
-                    
 
 end
 
