@@ -6,11 +6,6 @@ precision = zeros(6,1);
 accuracy = zeros(6,1);
 f_1 = zeros(6,1);
 
-TP_tot = 0;
-FP_tot = 0;
-TN_tot = 0;
-FN_tot = 0;
-
 for class=1:classes
     
     TP = 0;
@@ -35,15 +30,8 @@ for class=1:classes
     precision(class) = TP/(TP+FP);
     f_1(class) = 2*(recall(class)*precision(class))/(recall(class)+precision(class));
     
-    
-TP_tot = TP_tot + TP;
-FP_tot = FP_tot + FP;
-TN_tot = TN_tot + TN;
-FN_tot = FN_tot + FN;
-    
 end
-
-overall_accuracy = (TP_tot+TN_tot)/(TP_tot+FP_tot+FN_tot+TN_tot);
+overall_accuracy = sum(predictions == labels)/len;
 overall_error = 1 - overall_accuracy;
 
 end
