@@ -1,45 +1,44 @@
 % Script to perform cross validation
 % Generates evaluation metrics and confusion matrix for the report
-
-data = load('Data/cleandata_students.mat');
-%data = load('Data/noisydata_students.mat');
-
+data = load('Data/cleandata_students.mat'); % 'Data/noisydata_students.mat'
 examples = data.x;
 y = data.y;
 attributes = transpose(1:size(examples,2));
 
 %Set folds for validation and create tables to store data
-N_folds = 10;
+n_folds = 10;
+n_classes = 6;
 
-cv_total_accuracy = zeros(N_folds,1);
-cv_individual_accuracy = zeros(N_folds,6);
-cv_precision = zeros(N_folds,6);
-cv_recall = zeros(N_folds,6);
-cv_f1 = zeros(N_folds,6);
+cv_total_accuracy = zeros(n_folds,1);
+cv_individual_accuracy = zeros(n_folds,n_classes);
+cv_precision = zeros(n_folds, n_classes);
+cv_recall = zeros(n_folds, n_classes);
+cv_f1 = zeros(n_folds, n_classes);
 all_predictions = [];
 all_labels = [];
 
 % Generate indices for cross validation
 len = length(examples);
-partition = cvpartition(len, 'KFold', N_folds);
+partition = cvpartition(len, 'KFold', n_folds);
 
-<<<<<<< HEAD
 % Perform cross validation on N folds, storing evaluated data
-for t=1:N_folds
-    
+for t=1:n_folds
+    % Get training set for fold
     train_idx = partition.training(t);
     train_ex = examples(train_idx,:);
     train_lab = y(train_idx,:);
-    
+    % Get test set for fold
     test_idx = partition.test(t);
     test_ex = examples(test_idx,:);
     test_lab = y(test_idx,:);
     
+    % Train tree set
     tree_set = tree_set_gen(train_ex, attributes, train_lab);
-    
+    % Predict on test set
     tree_predictions = testTrees(tree_set, test_ex);
-    [fold_total_acc, fold_individual_accuracy, fold_recall, fold_precision, fold_f1] = evaluate_metrics(tree_predictions, test_lab, 6);
-    
+    % Evaluate prediction metrics
+    [fold_total_acc, fold_individual_accuracy, fold_recall, fold_precision, fold_f1] = evaluate_metrics(tree_predictions, test_lab, n_classes);
+    % Store results from fold
     cv_total_accuracy(t,1) = fold_total_acc;
     cv_individual_accuracy(t,:) = fold_individual_accuracy;
     cv_recall(t,:) = fold_recall;
@@ -48,8 +47,20 @@ for t=1:N_folds
     
     all_predictions = [all_predictions; tree_predictions];
     all_labels = [all_labels; test_lab];
+
+end
+
+%Create average confusion matrix over cross validation
+normalize = 1;
+confusion_matrix(all_predictions, all_labels, n_classes, normalize);
+
+% END
     
-=======
+
+
+
+
+
 
     %total_cv_precision = sum(cv_precision,1)/N_folds;
     %total_cv_accuracy = sum(cv_accuracy,1)/N_folds;
@@ -64,8 +75,8 @@ for t=1:N_folds
 %checks(:,3) = transpose(1:size(checks,1));
 %plot(transpose(1:size(checks,1)),checks(:,1),transpose(1:size(checks,1)),checks(:,2))
 
-tree_set = tree_set_gen(examples, attributes, y);
-multi_class_predictions = testTrees3(tree_set, examples(901:end, :), 1);
+%tree_set = tree_set_gen(examples, attributes, y);
+%multi_class_predictions = testTrees3(tree_set, examples(901:end, :), 1);
 % multi_class_predictions = testTrees(tree_set, noisy_examples);
 % confusion_matrix(multi_class_predictions, noisy_y, 1);
 
@@ -132,4 +143,4 @@ end
 % Plot the confusion matrix on the combined predictions on the N tests sets
 % made during cross validation (average confusion matrix).
 confusion_matrix(all_predictions, all_labels, 6, 1);
-
+%}

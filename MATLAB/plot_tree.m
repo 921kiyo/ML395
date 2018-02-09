@@ -1,20 +1,20 @@
-% Create a small tree and plot it
+% Script to create a decision tree (or tree set) and plot it.
 data = load('Data/cleandata_students.mat');   
 examples = data.x;
 attributes = transpose(1:size(examples,2));
 y = data.y;
-n = 1004;
-examples_sub = examples(1:n,:);
-y_sub = y(1:n,:);
+n_classes = 6;
 
+for emotion= 6:n_classes
+    % Train tree on emotion
+    labels = binary_targets(emotion, y);
+    t = DECISION_TREE_LEARNING(examples, attributes, labels);
 
-for emotion= 6:6
-    binary_sub = binary_targets(emotion, y_sub);
-    t = DECISION_TREE_LEARNING(examples_sub, attributes,  binary_sub);
+    % Get vector of node positions and corresponding attribute values from
+    % the tree
+    [nodes, labs] = tree_nodes(t, 0);
 
-    % Get vector of node positions from tree
-    [nod, labs] = tree_nodes(t, 0);
-
+    % Plot the tree:
     hFigure = figure('Color','w');
     hAxes = axes('Parent',hFigure,'YColor','w','LineWidth',2);
     hAxes.Visible = 'off';
@@ -24,13 +24,12 @@ for emotion= 6:6
 
     x_nodes = [];
     y_nodes = [];
-
     % Add node labels
-    [x,y] = treelayout(nod);
+    [x,y] = treelayout(nodes);
 
     hold on
     for i=1:length(labs)    
-        [y1,y2,x2] = get_node_position(nod,x,i);
+        [y1,y2,x2] = get_node_position(nodes,x,i);
 
         if i > 1
             plot(hAxes,[x(i),x2],[y1,y2]);
@@ -41,10 +40,8 @@ for emotion= 6:6
     plot(hAxes,x,y_nodes,'o','MarkerFaceColor',[0.96 0.96 0.86],...
           'MarkerSize',15,'MarkerEdgeColor','k','LineWidth',1);
 
-    
-
     for i=1:length(labs)    
-        [y1,y2,x2] = get_node_position(nod,x,i);
+        [y1,y2,x2] = get_node_position(nodes,x,i);
 
         if labs(i) == -1
              t = text(hAxes,x(i),y1,'T');
@@ -58,8 +55,7 @@ for emotion= 6:6
         t.HorizontalAlignment='center';
     end
 
-    hold off
-    
+    hold off    
     print(num2str(emotion),'-depsc')
     
 end
