@@ -3,6 +3,11 @@
 data = load('Data/cleandata_students.mat'); % 'Data/noisydata_students.mat'
 examples = data.x;
 y = data.y;
+
+noisy_data = load('Data/noisydata_students.mat');
+noisy_examples = noisy_data.x;
+noisy_y = noisy_data.y;
+
 attributes = transpose(1:size(examples,2));
 
 %Set folds for validation and create tables to store data
@@ -78,6 +83,7 @@ confusion_matrix(all_predictions, all_labels, n_classes, normalize);
 %tree_set = tree_set_gen(examples, attributes, y);
 %multi_class_predictions = testTrees3(tree_set, examples(901:end, :), 1);
 % multi_class_predictions = testTrees(tree_set, noisy_examples);
+multi_class_predictions = testTrees3(tree_set, noisy_examples);
 % confusion_matrix(multi_class_predictions, noisy_y, 1);
 
 

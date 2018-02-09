@@ -1,13 +1,27 @@
-function [ result ] = testTrees3( binary_target, binary_predictions )
+function [ result ] = testTrees3(T, x2)
 %TESTTREES3 Summary of this function goes here
 %   Detailed explanation goes here
-classes = [0 1];
-f_1_array = zeros(1,6);
+% classes = [0 1];
+% f_1_array = zeros(1,6);
+% 
+% for i = 1:6
+%    [overall_accuracy, accuracy, recall, precision, f_1] = evaluate_metrics(binary_predictions, binary_target, classes);
+%    
 
-for i = 1:6
-   [overall_accuracy, accuracy, recall, precision, f_1] = evaluate_metrics(binary_predictions, binary_target, classes);
-   f_1_array(1,i) = f_1; 
+% end
+
+
+
+binary_predictions = zeros(size(x2,1),6);
+
+for i = 1:length(T)
+    pred = prediction(T(i), x2);
+    binary_prediction(:,i) = pred;
 end
+
+% TODO: Hardcode f scores. When the trees are tested, they will have
+% already been trained
+f_1_array = [0.166, 0.167, 0.165, 0.168, 0.164, 0.169];
 
 l = size(binary_predictions,1);
 
@@ -20,10 +34,11 @@ for i = 1:l
         % Choose the common emotion from the training
         % TODO rather than the maximum F1
 %         result(i) = max(f_1_array);
+        result(i) = randi([1,6]);   
     elseif(sum(binary_predictions(i,:)) == 1)
         for j = 1:6
             if binary_predictions(i,j) == 1
-                result(i) =j;
+                result(i) = j;
             end
         end
     else
@@ -34,20 +49,22 @@ for i = 1:l
         f_1_candidates = {};
         for j = 1:6
             if binary_predictions(i,j) == 1
-                predictions = [[predictions, f_1_candidates], j];
+                predictions = [predictions,j];
+                f_1_candidates = [f_1_candidates, f_1_array(j)];
                 % Store both predictions and F1 in [[pred1, F1_1], [pred2,
                 % F1_2] ...] 
             end
         end
-        length = size(predictions, 1);
+        num_pred = numel(predictions);
         max_f1 = 0;
-        for i = 1:length
-            if max_f1 < predictions(i, 2)
-                % Store [emotion, F1]
-                max_f1 = [predictions(i, 1), predictions(i, 2)];
+        best_discriminant = 0;
+        for i = 1:num_pred;
+            if max_f1 < f_1_candidates(i)
+                best_discriminant = i;
+                max_f1 = f_1_candidates(i);
             end
         end
-        result(i) = max_f1(1,2);
+        result(i) = best_discriminant;
     end
 end
 
