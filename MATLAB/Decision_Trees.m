@@ -1,6 +1,6 @@
 % Script to perform cross validation
 % Generates evaluation metrics and confusion matrix for the report
-data = load('Data/noisydata_students.mat'); % 'Data/noisydata_students.mat'
+data = load('Data/cleandata_students.mat'); % 'Data/noisydata_students.mat'
 examples = data.x;
 y = data.y;
 
@@ -59,4 +59,20 @@ end
 normalize = 1;
 confusion_matrix(all_predictions, all_labels, n_classes, normalize);
 
+%Generate values for report:
+%Averages
+report_accuracy = mean(cv_total_accuracy);
+report_error_set = (1 - cv_total_accuracy);
+report_error = mean(report_error_set);
+
+%Errors
+report_accuracy_conf = 1.96 * std(cv_total_accuracy)/ sqrt(n_folds);
+report_error_conf = 1.96 * std(report_error_set)/ sqrt(n_folds);
+
+%Recall, Precision, F_1 by emotion:
+report_recall = mean(cv_recall);
+report_precision = mean(cv_precision);
+report_f1 = mean(cv_f1);
+
 % END
+    
