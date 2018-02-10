@@ -27,10 +27,12 @@ for i = 1:l
     if(sum(binary_predictions(i,:)) == 0)
         % Choose a random number between 1 and the number of classes
         result(i) = randi([1,n_classes]);
+        
+        disp(i)
     elseif(sum(binary_predictions(i,:)) == 1)
         for j = 1:n_classes
             if binary_predictions(i,j) == 1
-                result(i) =j;
+                result(i) = j;
             end
         end
     else
