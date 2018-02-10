@@ -1,4 +1,7 @@
 function [result] = testTrees2(T, x2)
+% 
+% to resolve conflicting positives from underlying trees
+
 n_tree = length(T);
 
 binary_predictions = zeros(size(x2,1),n_tree);

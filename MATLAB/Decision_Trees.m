@@ -1,6 +1,6 @@
 % Script to perform cross validation
 % Generates evaluation metrics and confusion matrix for the report
-data = load('Data/cleandata_students.mat'); % 'Data/noisydata_students.mat'
+data = load('Data/cleandata_students.mat');
 examples = data.x;
 y = data.y;
 

@@ -1,5 +1,5 @@
 function [predictions] = testTrees(T, x2)
-% Test trees using random assignment of classes
+% Test trees using the length of the trees (shortest tree)
 % to resolve conflicting positives from underlying trees
 n_trees = length(T);
 binary_prediction_set = zeros(size(x2,1),n_trees);
