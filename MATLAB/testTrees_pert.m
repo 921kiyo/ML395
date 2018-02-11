@@ -6,18 +6,34 @@ agg_pred_set = zeros(size(1000,1),n_trees);
 n_examples = length(x2);
 for n=1:n_examples
     
-    % 1000 permutations
-    for k= 1:50
+    % Set number of repeats
+    for k= 1:120
         example = x2(n,:);
+        
         pos = randi(44)+1;
-        % Switch off a random attribute
         example(pos) = 0;
+     
         pos = randi(44)+1;
-        % Switch off another random attribute
         example(pos) = 0;
+        
         pos = randi(44)+1;
-        % Switch off another random attribute
+        example(pos) = 1;
+        
+        pos = randi(44)+1;
+        example(pos) = 1;
+        
+        pos = randi(44)+1;
         example(pos) = 0;
+        
+        pos = randi(44)+1;
+        example(pos) = 0;
+        
+        pos = randi(44)+1;
+        example(pos) = 1;
+        
+        pos = randi(44)+1;
+        example(pos) = 1;
+
         
         for i = 1:length(T)
             pred = prediction(T(i), example);
