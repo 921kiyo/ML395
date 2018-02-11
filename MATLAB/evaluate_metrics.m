@@ -1,4 +1,4 @@
-function [overall_accuracy, accuracy, recall, precision, f_1] = evaluate_metrics(predictions, labels, classes)
+function [overall_accuracy, accuracy, recall, precision] = evaluate_metrics(predictions, labels, classes)
 % Function to evaluate metrics on a set of predictions and labels
 % Initialise variables:
 len = length(predictions);
@@ -31,7 +31,7 @@ for class=1:classes
     accuracy(class) = (TP+TN)/(TP+FP+FN+TN);
     recall(class) = TP/(TP+FN);
     precision(class) = TP/(TP+FP);
-    f_1(class) = 2*recall(class)*precision(class)/(recall(class)+precision(class));
+    %f_1(class) = 2*recall(class)*precision(class)/(recall(class)+precision(class));
 end
 % Compute overall accuracy
 overall_accuracy = sum(predictions == labels)/len;

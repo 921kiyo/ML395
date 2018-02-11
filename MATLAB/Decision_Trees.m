@@ -18,7 +18,6 @@ cv_total_accuracy = zeros(n_folds,1);
 cv_individual_accuracy = zeros(n_folds,n_classes);
 cv_precision = zeros(n_folds, n_classes);
 cv_recall = zeros(n_folds, n_classes);
-cv_f1 = zeros(n_folds, n_classes);
 all_predictions = [];
 all_labels = [];
 
@@ -42,13 +41,12 @@ for t=1:n_folds
     % Predict on test set
     tree_predictions = testTrees_pert(tree_set, test_ex);
     % Evaluate prediction metrics
-    [fold_total_acc, fold_individual_accuracy, fold_recall, fold_precision, fold_f1] = evaluate_metrics(tree_predictions, test_lab, n_classes);
+    [fold_total_acc, fold_individual_accuracy, fold_recall, fold_precision] = evaluate_metrics(tree_predictions, test_lab, n_classes);
     % Store results from fold
     cv_total_accuracy(t,1) = fold_total_acc;
     cv_individual_accuracy(t,:) = fold_individual_accuracy;
     cv_recall(t,:) = fold_recall;
     cv_precision(t,:) = fold_precision;
-    cv_f1(t,:) = fold_f1;
     
     all_predictions = [all_predictions; tree_predictions];
     all_labels = [all_labels; test_lab];
@@ -72,7 +70,11 @@ report_error_conf = 1.96 * std(report_error_set)/ sqrt(n_folds);
 %Recall, Precision, F_1 by emotion:
 report_recall = mean(cv_recall);
 report_precision = mean(cv_precision);
-report_f1 = mean(cv_f1);
+%Set size
+report_f1 = report_recall;
+for n=1:length(report_precision)
+    report_f1(n) = 2*report_recall(n)*report_precision(n) / (report_recall(n) + report_precision(n));
+end
 
 % END
     
