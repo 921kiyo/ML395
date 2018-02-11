@@ -1,21 +1,17 @@
 # 395 Machine Learning CBC Part1
 
+We implemented Decision Trees method to identify size basic emotions from the human facial techniques expressions (anger, disgust, fear, happiness, sadness, and surprise) 
+based on a labelled set of facial Action Units(AUs).
 
-##
+## Installation How to run
+The program was tested using MATLAB R2017a. 
 
-Run
+To run testTree function on the stored tree object (`tree_set.mat`), run
 
-`virtualenv -p python3 venv`
+`main.m`
 
-To get into the virtualenv, run
+In order to execute k-fold cross-validation and generate various values, run
+`Decision_Trees.m`
 
-`source venv/bin/activate`
-
-To get the same dependencies, run
-
-`pip install -r requirements.txt`
-
-
-To get out of the virtualenv, run
-
-`deactivate`
+## Dependencies
+N/A
