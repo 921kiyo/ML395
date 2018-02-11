@@ -19,9 +19,6 @@ for emotion= 6:n_classes
     hAxes = axes('Parent',hFigure,'YColor','w','LineWidth',2);
     hAxes.Visible = 'off';
     
-    %xlim([0.1 0.8])
-    %ylim([0 10])
-
     x_nodes = [];
     y_nodes = [];
     % Add node labels

@@ -1,4 +1,5 @@
 function [out_nodes, out_labels] = tree_nodes(tree, root_id)
+% Function to return nodes and labels for corresponding sub-trees
     out_nodes = [root_id];
     
     if tree.op ~= -1

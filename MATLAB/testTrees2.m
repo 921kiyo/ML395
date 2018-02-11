@@ -1,6 +1,8 @@
 function [result] = testTrees2(T, x2)
-% 
-% to resolve conflicting positives from underlying trees
+% Function to comgine 6 trees based on the length of tree (shortest tree).
+% if no binary trees predict a class, we choose randomly
+% if one binary tree predicts a class, we select that tree
+% if >1 binary tree predicts a class, we select the tree that has the shortest tree.
 
 n_tree = length(T);
 
@@ -31,6 +33,8 @@ for i = 1:l
             end
         end
     else
+    % If more than one class predict that the example has the emotion,
+    % choose the emotion based on the length of the trees (min_length)
         for j = 1:n_tree
             if binary_predictions(i,j) == 1
                 if (min_length == -1) || (counters(i,j) < min_length)
@@ -45,8 +49,7 @@ end
 end
 
 function [ prediction_result, counter_result] = shortest_tree( tree, examples )
-%SHORTEST_TREE Summary of this function goes here
-%   Detailed explanation goes here
+%Function that measure the depth of tree, and return it as well as prediction
     root = tree;
     len_examples = size(examples, 1);
     prediction_result = transpose(1:len_examples);

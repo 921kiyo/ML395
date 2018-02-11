@@ -1,10 +1,9 @@
 function [result] = testTrees3(T, x2)
-% Function to comgine 6 trees based on the number of example in each leaf
-% leaf
+% Function to comgine 6 trees based on the number of example in each leaf.
 % if no binary trees predict a class, we choose randomly
 % if one binary tree predicts a class, we select that tree
-% if >1 binary tree predicts a class, we select the tree with the highest
-% F1 score achieved during training (hardcoded)
+% if >1 binary tree predicts a class, we select the tree with minimum
+% length based on the number of examples in each leaf node.
 binary_predictions = zeros(size(x2,1),6);
 counters = zeros(size(x2,1),6);
 
@@ -50,8 +49,8 @@ end
 
 
 function [ prediction_result, counter_result] = count_leaf_examples( tree, examples )
-%SHORTEST_TREE Summary of this function goes here
-%   Detailed explanation goes here
+%Function that counts the number of examples in each leaf node, and returns
+%both prediction as well as the sum of the count
     root = tree;
     len_examples = size(examples, 1);
     prediction_result = transpose(1:len_examples);

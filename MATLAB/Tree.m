@@ -1,6 +1,6 @@
 classdef Tree
-    %UNTITLED8 Summary of this class goes here
-    %   Detailed explanation goes here
+    %Class definition for Tree of three properties and recursive call for
+    %generating subtrees
     
     properties
         op;
