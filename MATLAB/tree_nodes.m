@@ -11,7 +11,7 @@ function [out_nodes, out_labels] = tree_nodes(tree, root_id)
             out_labels = -2;
         end
     end
-    
+    % Recurve through the tree appending to the vector of nodes
     if not(isempty(tree.kids))
         [n1,l1] = tree_nodes(tree.kids(1), root_id+1);
         [n2,l2] = tree_nodes(tree.kids(2), root_id+1);
