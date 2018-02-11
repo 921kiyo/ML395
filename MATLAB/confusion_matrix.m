@@ -28,7 +28,7 @@ for i=1:classes
 end
 
 % Create a heatmap representing the confusion matrix
-h = heatmap(confusion);
+h = heatmap(confusion, 'FontSize', 16);
 xlabel('Predicted Class')
 ylabel('Actual Class')
 colorbar('off')
