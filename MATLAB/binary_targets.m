@@ -1,6 +1,5 @@
 function [ matrix ] = binary_targets(val,y)
-%UNTITLED2 Summary of this function goes here
-%   Detailed explanation goes here
+% Function to map labels in y into binary for a particular emotion
     matrix = y;
     matrix(matrix ~= val) = 0;
     matrix(matrix==val) = 1;
