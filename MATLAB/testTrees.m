@@ -1,5 +1,5 @@
 function [predictions] = testTrees(T, x2)
-% Function to comgine 6 trees based on the length of tree (shortest tree).
+% Function to comgine 6 trees based on random selection of an emotion when there is no/more than one binary trees.
 % if no binary trees predict a class, we choose randomly
 % if one binary tree predicts a class, we select that tree
 % if >1 binary tree predicts a class, we choose randomly among these emotions.
