@@ -1,12 +1,8 @@
 % Script to perform cross validation
 % Generates evaluation metrics and confusion matrix for the report
-data = load('Data/noisydata_students.mat');
+data = load('Data/cleandata_students.mat');
 examples = data.x;
 y = data.y;
-
-noisy_data = load('Data/noisydata_students.mat');
-noisy_examples = noisy_data.x;
-noisy_y = noisy_data.y;
 
 attributes = transpose(1:size(examples,2));
 
@@ -39,7 +35,7 @@ for t=1:n_folds
     % Train tree set
     tree_set = tree_set_gen(train_ex, attributes, train_lab);
     % Predict on test set
-    tree_predictions = testTrees_pert(tree_set, test_ex);
+    tree_predictions = testTrees(tree_set, test_ex);
     % Evaluate prediction metrics
     [fold_total_acc, fold_individual_accuracy, fold_recall, fold_precision] = evaluate_metrics(tree_predictions, test_lab, n_classes);
     % Store results from fold
