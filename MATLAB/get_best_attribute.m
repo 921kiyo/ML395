@@ -1,12 +1,10 @@
 function [best_attribute_] = get_best_attribute(examples_,attributes,binary)
-%UNTITLED6 Summary of this function goes here
-%   Detailed explanation goes here
+% Function to return the best attribute based on the highest information
+% gain among attributes left
     max_gain = 0; 
     best_attribute_ = 1;
     
-    %disp(size(examples));
     for attr=1:size(attributes,1)
-        %disp(attributes(attr));
        
         col = examples_(:,attributes(attr));
         p_1 = size(col(col==1 & binary == 1),1);

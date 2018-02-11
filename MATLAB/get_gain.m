@@ -1,6 +1,5 @@
 function [ gain ] = get_gain(p_1,n_1,p_0,n_0)
-%UNTITLED5 Summary of this function goes here
-%   Detailed explanation goes here
+% Function to comput information gain
     N_0 = p_0 + n_0;
     N_1 = p_1 + n_1;
     total = N_0 + N_1;
@@ -10,10 +9,9 @@ function [ gain ] = get_gain(p_1,n_1,p_0,n_0)
 end
 
 function [ I ] = get_I( p,n )
-%UNTITLED4 Summary of this function goes here
-%   Detailed explanation goes here
+% Helper function to compute all possible values for attribute:
+% Remainder(attribute)
     N = p+n;
-    %N=3
     A = 0;
     B=0;
     if p>0; A = (p/N)*log2(p/N); end
