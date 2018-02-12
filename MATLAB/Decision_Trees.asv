@@ -79,4 +79,3 @@ for number_flips = 1:44
 end
 x = (1:44);
 plot(x, acc_recorded)
-print(num2str(emotion),'-depsc')
